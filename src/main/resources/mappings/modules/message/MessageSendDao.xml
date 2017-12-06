@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.message.dao.MessageSendDao">
+    
+	<sql id="messageSendColumns">
+		a.id AS "member.id",
+		a.profile_photo_url AS "member.profilePhotoUrl", 
+		a.nick_name AS "member.nickName", 
+		a.real_name AS "member.realName", 
+		a.sex AS "member.sex", 
+		a.birthday AS "member.birthday", 
+		a.id_card_no AS "member.idCardNo", 
+		a.id_card_no_down_pic_url AS "member.idCardNoDownPicUrl", 
+		a.id_card_no_up_pic_url AS "member.idCardNoUpPicUrl", 
+		a.phone_no AS "member.phoneNo", 
+		a.available_amount AS "member.availableAmount", 
+		a.deposit AS "member.deposit", 
+		a.consume_amount AS "member.consumeAmount", 
+		a.authenticated AS "member.authenticated", 
+		a.member_status AS "member.memberStatus", 
+		a.create_date AS "member.createDate", 
+		a.update_date AS "member.updateDate", 
+		a.registered_date AS "member.registeredDate", 
+		a.auth_date AS "member.authDate"
+
+	</sql>
+	
+	<sql id="messageSendJoins">
+	</sql>
+    
+	<select id="get" resultType="MessageSend">
+		SELECT 
+			<include refid="messageSendColumns"/>
+		FROM lzr_message a
+		<include refid="messageSendJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="MessageSend">
+		SELECT 
+			<include refid="messageSendColumns"/>
+		FROM lzr_member a
+		<include refid="messageSendJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="member.id != null and member.id != ''">
+				AND a.id =#{member.id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="MessageSend">
+		SELECT 
+			<include refid="messageSendColumns"/>
+		FROM lzr_member a
+		<include refid="messageSendJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_message(
+			msg_demo_id,
+			demo_name,
+			demo_content,
+			crete_date,
+			update_date
+		) VALUES (
+			#{msgDemoId},
+			#{demoName},
+			#{demoContent},
+			#{creteDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_message SET 	
+			msg_demo_id  =#{msgDemoId},
+			demo_name  =#{demoName},
+			demo_content  =#{demoContent},
+			update_date  =#{updateDate},
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_message SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

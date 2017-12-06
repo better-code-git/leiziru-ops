@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.overall.dao.SeviceFeeDao">
+    
+	<sql id="seviceFeeColumns">
+		a.id AS "id",
+		a.fee_percent  AS "feePercent",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="seviceFeeJoins">
+	</sql>
+    
+	<select id="get" resultType="SeviceFee">
+		SELECT 
+			<include refid="seviceFeeColumns"/>
+		FROM lzr_sevice_fee a
+		<include refid="seviceFeeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="SeviceFee">
+		SELECT 
+			<include refid="seviceFeeColumns"/>
+		FROM lzr_sevice_fee a
+		<include refid="seviceFeeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="SeviceFee">
+		SELECT 
+			<include refid="seviceFeeColumns"/>
+		FROM lzr_sevice_fee a
+		<include refid="seviceFeeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_sevice_fee(
+			fee_percent,
+			create_date,
+			update_date
+		) VALUES (
+			#{feePercent},
+			#{createDate},
+			#{updateDate}		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_sevice_fee SET 	
+			fee_percent = #{feePercent},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_sevice_fee SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

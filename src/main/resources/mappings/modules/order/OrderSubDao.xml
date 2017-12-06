@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.order.dao.OrderSubDao">
+    
+	<sql id="orderSubColumns">
+		a.id AS "id",
+		a.order_id AS "orderId",
+		a.order_id_sub AS "orderIdSub",
+		a.order_amount_period AS "orderAmountPeriod",
+		a.period AS "period",
+		a.sub_order_status AS "subOrderStatus",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="orderSubJoins">
+	</sql>
+    
+	<select id="get" resultType="OrderSub">
+		SELECT 
+			<include refid="orderSubColumns"/>
+		FROM lzr_order_sub a
+		<include refid="orderSubJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OrderSub">
+		SELECT 
+			<include refid="orderSubColumns"/>
+		FROM lzr_order_sub a
+		<include refid="orderSubJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="orderId != null and orderId != ''">
+				AND a.order_id =#{orderId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				order BY ${page.orderBy}
+			</when>
+			<otherwise>
+				order BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OrderSub">
+		SELECT 
+			<include refid="orderSubColumns"/>
+		FROM lzr_order_sub a
+		<include refid="orderSubJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				order BY ${page.orderBy}
+			</when>
+			<otherwise>
+				order BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_order_sub(
+			order_id,
+			order_id_sub,
+			order_amount_period,
+			period,
+			sub_order_status,
+			create_date,
+			update_date
+		) VALUES (
+			#{orderId},
+			#{orderIdSub},
+			#{orderAmountPeriod},
+			#{period},
+			#{subOrderStatus},
+			#{createDate},
+			#{updateDate},
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_order_sub SET 	
+			order_id  = #{orderId},
+			order_id_sub = #{orderIdSub},
+			order_amount_period= #{orderAmountPeriod},
+			period= #{period},
+			sub_order_status= #{subOrderStatus},
+			update_date =#{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_order_sub SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除批量-->
+	<update id="deleteBatchByLogic">
+		UPDATE lzr_order_sub SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id in
+		<foreach collection="idList" item="id" open="(" close=")" separator=",">
+				  #{id}
+		</foreach> 
+	</update>
+	
+</mapper>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.product.dao.ProductPicDao">
+    
+	<sql id="productPicColumns">
+		a.id AS "id",
+		a.pic_type AS "picType",
+		a.pic_url AS "picUrl",
+		a.pic_desc AS "picDesc",
+		a.pic_relate_id AS "picRelateId",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="productPicJoins">
+	</sql>
+    
+	<select id="get" resultType="ProductPic">
+		SELECT 
+			<include refid="productPicColumns"/>
+		FROM lzr_product_pic a
+		<include refid="productPicJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ProductPic">
+		SELECT 
+			<include refid="productPicColumns"/>
+		FROM lzr_product_pic a
+		<include refid="productPicJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="picType != null and picType != ''">
+				AND a.pic_type =#{picType}
+			</if>
+			<if test="picRelateId != null and picRelateId != ''">
+				AND a.pic_relate_id =#{picRelateId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_product_pic(
+		    pic_type,
+		    pic_url,
+			pic_desc,
+			pic_relate_id,
+			create_date,
+			update_date
+		) VALUES (
+			#{picType},
+			#{picUrl},
+			#{picDesc},
+			#{picRelateId},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_product_pic SET 	
+			pic_type =#{picType},
+		    pic_url =#{picUrl},
+			pic_desc =#{picDesc},
+			pic_relate_id =#{picRelateId},
+			update_date =#{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_product_pic SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除批量-->
+	<update id="deleteBatchByLogic">
+		UPDATE lzr_product_pic SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id in
+		<foreach collection="idList" item="id" open="(" close=")" separator=",">
+				  #{id}
+		</foreach> 
+	</update>
+</mapper>

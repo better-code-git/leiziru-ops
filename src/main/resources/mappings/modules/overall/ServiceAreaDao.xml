@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.overall.dao.ServiceAreaDao">
+    
+	<sql id="serviceAreaColumns">
+		a.id AS "id",
+		a.province_id AS "provinceId",
+		a.city_id AS "cityId",
+		a.zone_id AS "zoneId",
+		a.metro_id AS "metroId",
+		a.district_id AS "districtId",
+		a.province_name AS "provinceName",
+		a.city_name AS "cityName",
+		a.zone_name AS "zoneName",
+		a.metro_name AS "metroName",
+		a.district_name AS "districtName",
+		a.type AS "type",
+		a.area_name AS "areaName",
+		a.is_service AS "isService",
+		a.open_status AS "openStatus",
+		a.open_date AS "openDate",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag"
+	</sql>
+	
+	<sql id="serviceAreaJoins">
+	</sql>
+    
+	<select id="get" resultType="ServiceArea">
+		SELECT 
+			<include refid="serviceAreaColumns"/>
+		FROM lzr_service_area a
+		<include refid="serviceAreaJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ServiceArea">
+		SELECT 
+			<include refid="serviceAreaColumns"/>
+		FROM lzr_service_area a
+		<include refid="serviceAreaJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="type != null and type != ''">
+				AND a.type =#{type}
+			</if>
+			<if test="provinceId != null and provinceId != ''">
+				AND a.province_id =#{provinceId}
+			</if>
+			<if test="cityId != null and cityId != ''">
+				AND a.city_id =#{cityId}
+			</if>
+			<if test="zoneId != null and zoneId != ''">
+				AND a.zone_id =#{zoneId}
+			</if>
+			<if test="openStatus != null">
+				AND a.open_status =#{openStatus}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findZoneAndMetroList" resultType="ServiceArea">
+		SELECT 
+			<include refid="serviceAreaColumns"/>
+		FROM lzr_service_area a
+		<include refid="serviceAreaJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+				AND a.type in ('3','5') 
+			<if test="provinceId != null and provinceId != ''">
+				AND a.province_id =#{provinceId}
+			</if>
+			<if test="cityId != null and cityId != ''">
+				AND a.city_id =#{cityId}
+			</if>
+			<if test="zoneId != null and zoneId != ''">
+				AND a.zone_id =#{zoneId}
+			</if>
+			<if test="openStatus != null and openStatus != ''">
+				AND a.open_status =#{openStatus}
+			</if>
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findListByCheck" resultType="ServiceArea">
+		SELECT 
+			<include refid="serviceAreaColumns"/>
+		FROM lzr_service_area a
+		<include refid="serviceAreaJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id != #{id}
+			</if>
+			<if test="provinceId != null and provinceId != ''">
+				AND a.province_id =#{provinceId}
+			</if>
+			<if test="cityId != null and cityId != ''">
+				AND a.city_id =#{cityId}
+			</if>
+			<if test="zoneId != null and zoneId != ''">
+				AND a.zone_id =#{zoneId}
+			</if>
+			<if test="areaName != null and areaName != ''">
+				AND a.area_name =#{areaName}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	
+	
+	<insert id="insert">
+		INSERT INTO lzr_service_area(
+			province_id,
+			city_id,
+			zone_id,
+			metro_id,
+			district_id,
+			province_name,
+			city_name,
+			zone_name,
+			metro_name,
+			district_name,
+			type,
+			area_name,
+			is_service,
+			open_status,
+			open_date,
+			create_date,
+			update_date,
+			del_flag
+		) VALUES (
+			#{provinceId},
+			#{cityId},
+			#{zoneId},
+			#{metroId},
+			#{districtId},
+			#{provinceName},
+			#{cityName},
+			#{zoneName},
+			#{metroName},
+			#{districtName},
+			#{type},
+			#{areaName},
+			#{isService},
+			#{openStatus},
+			#{openDate},
+			#{createDate},
+			#{updateDate},
+			#{delFlag}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_service_area SET 	
+			province_id = #{provinceId},
+			city_id = #{cityId},
+			zone_id = #{zoneId},
+			metro_id = #{metroId},
+			district_id = #{districtId},
+			province_name = #{provinceName},
+			city_name = #{cityName},
+			zone_name = #{zoneName},
+			metro_name = #{metroName},
+			district_name = #{districtName},
+			type = #{type},
+			area_name = #{areaName},
+			is_service = #{isService},
+			open_status = #{openStatus},
+			open_date = #{openDate},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_service_area SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<update id="updateOpenStatus">
+		UPDATE lzr_service_area SET 
+			open_status = #{openStatus},
+			open_date = #{openDate},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	
+</mapper>

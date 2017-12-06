@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.officeWeb.dao.RecruitDao">
+    
+	<sql id="recruitColumns">
+		a.id AS "id",
+		a.job_title AS "jobTitle",
+		a.job_location AS "jobLocation",
+		a.job_numbers AS "jobNumbers",
+		a.job_required AS "jobRequired",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="recruitJoins">
+	</sql>
+    
+	<select id="get" resultType="Recruit">
+		SELECT 
+			<include refid="recruitColumns"/>
+		FROM lzr_recruit a
+		<include refid="recruitJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Recruit">
+		SELECT 
+			<include refid="recruitColumns"/>
+		FROM lzr_recruit a
+		<include refid="recruitJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Recruit">
+		SELECT 
+			<include refid="recruitColumns"/>
+		FROM lzr_recruit a
+		<include refid="recruitJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_recruit(
+			job_title,
+			job_location,
+			job_numbers,
+			job_required,
+			create_date,
+			update_date
+		) VALUES (
+			#{jobTitle},
+			#{jobLocation},
+			#{jobNumbers},
+			#{jobRequired},
+			#{createDate},
+			#{updateDate}		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_recruit SET 	
+			job_title=#{jobTitle},
+			job_location=#{jobLocation},
+			job_numbers=#{jobNumbers},
+			job_required=#{jobRequired},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_recruit SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

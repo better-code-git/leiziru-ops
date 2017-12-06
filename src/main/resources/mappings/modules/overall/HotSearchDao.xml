@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.overall.dao.HotSearchDao">
+    
+	<sql id="hotSearchColumns">
+		a.id AS "id",
+		a.city_name  AS "cityName",
+		a.city_id AS "cityId",
+		a.key_name AS "keyName",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="hotSearchJoins">
+	</sql>
+    
+	<select id="get" resultType="HotSearch">
+		SELECT 
+			<include refid="hotSearchColumns"/>
+		FROM lzr_hot_search a
+		<include refid="hotSearchJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="HotSearch">
+		SELECT 
+			<include refid="hotSearchColumns"/>
+		FROM lzr_hot_search a
+		<include refid="hotSearchJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="cityId != null and cityId != ''">
+				AND a.city_id =#{cityId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="HotSearch">
+		SELECT 
+			<include refid="hotSearchColumns"/>
+		FROM lzr_hot_search a
+		<include refid="hotSearchJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_hot_search(
+			city_id,
+			city_name,
+			key_name,
+			create_date,
+			update_date
+		) VALUES (
+			#{cityId},
+			#{cityName},
+			#{keyName},
+			#{createDate},
+			#{updateDate}		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_hot_search SET 	
+			city_name = #{cityName},
+			city_id = #{cityId},
+			key_name = #{keyName},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_hot_search SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

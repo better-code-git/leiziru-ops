@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.member.dao.MemberWalletDao">
+    
+	<sql id="memberWalletColumns">
+		a.id AS "id",
+		a.member_id AS "memberId", 
+		a.profile_photo_url AS "profilePhotoUrl", 
+		a.nick_name AS "nickName", 
+		a.real_name AS "realName", 
+		a.sex AS "sex", 
+		a.zone AS "zone", 
+		a.city AS "city", 
+		a.province AS "province", 
+		a.birthday AS "birthday", 
+		a.id_card_no AS "idCardNo", 
+		a.id_card_no_down_pic_url AS "idCardNoDownPicUrl", 
+		a.id_card_no_up_pic_url AS "idCardNoUpPicUrl", 
+		a.phone_no AS "phoneNo", 
+		a.available_amount AS "availableAmount", 
+		a.deposit AS "deposit", 
+		a.consume_amount AS "consumeAmount", 
+		a.authenticated AS "authenticated", 
+		a.member_status AS "memberStatus", 
+		a.create_date AS "createDate", 
+		a.update_date AS "updateDate", 
+		a.registered_date AS "registeredDate", 
+		a.auth_date AS "authDate"
+	</sql>
+	
+	<sql id="memberWalletJoins">
+	</sql>
+    
+	<select id="get" resultType="MemberWallet">
+		SELECT 
+			<include refid="memberWalletColumns"/>
+		FROM lzr_member_wallet a
+		<include refid="memberWalletJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="MemberWallet">
+		SELECT 
+			<include refid="memberWalletColumns"/>
+		FROM lzr_member_wallet a
+		<include refid="memberWalletJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="memberId != null and memberId != ''">
+				AND a.member_id =#{memberId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="MemberWallet">
+		SELECT 
+			<include refid="memberWalletColumns"/>
+		FROM lzr_member_wallet a
+		<include refid="memberWalletJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_member_wallet(
+			member_id, 
+			profile_photo_url, 
+			nick_name, 
+			real_name, 
+			sex, 
+			zone, 
+			city, 
+			province, 
+			birthday, 
+			id_card_no, 
+			id_card_no_down_pic_url, 
+			id_card_no_up_pic_url, 
+			phone_no, 
+			available_amount, 
+			deposit, 
+			consume_amount, 
+			authenticated, 
+			member_status, 
+			create_date, 
+			update_date, 
+			registered_date, 
+			auth_date
+		) VALUES (
+			#{memberId}, 
+			#{profilePhotoUrl}, 
+			#{nickName},  
+			#{realName}, 
+			#{sex}, 
+			#{zone}, 
+			#{city}, 
+			#{province}, 
+			#{birthday}, 
+			#{idCardNo}, 
+			#{idCardNoDownPicUrl}, 
+			#{idCardNoUpPicUrl}, 
+			#{phoneNo}, 
+			#{availableAmount}, 
+			#{deposit},  
+			#{consumeAmount}, 
+			#{authenticated},  
+			#{memberStatus}, 
+			#{createDate}, 
+			#{updateDate}, 
+			#{registeredDate}, 
+			#{authDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_member_wallet SET 	
+			member_id =#{memberId},
+			profile_photo_url=#{profilePhotoUrl},
+			nick_name =#{nickName},   
+			real_name = #{realName},
+			sex = #{sex},
+			zone = #{zone},
+			city = #{city}, 
+			province = #{province},
+			birthday = #{birthday},
+			id_card_no = #{idCardNo},
+			id_card_no_down_pic_url = #{idCardNoDownPicUrl},
+			id_card_no_up_pic_url = #{idCardNoUpPicUrl},
+			phone_no = #{phoneNo},
+			available_amount = #{availableAmount},
+			deposit = #{deposit},
+			consume_amount = #{consumeAmount},
+			authenticated = #{authenticated},
+			member_status = #{memberStatus},
+			update_date = #{updateDate},
+			registered_date = #{registeredDate},
+			auth_date= #{authDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_member_wallet SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

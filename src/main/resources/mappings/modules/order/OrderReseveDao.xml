@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.order.dao.OrderReseveDao">
+    
+	<sql id="orderReseveColumns">
+		a.id AS "id",
+		a.contact_phone_no AS "contactPhoneNo",
+		a.reseve_time AS "reseveTime",
+		a.reseve_memo AS "reseveMemo",
+ 		a.contact_sex AS "contactSex",
+		a.member_id  AS "memberId",
+		a.product_id AS "productId",
+		a.order_date AS "orderDate",
+		a.contact_name AS "contactName",
+		a.order_status AS "orderStatus",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="orderReseveJoins">
+	</sql>
+    
+	<select id="get" resultType="OrderReseve">
+		SELECT 
+			<include refid="orderReseveColumns"/>
+		FROM lzr_order_reseve a
+		<include refid="orderReseveJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="OrderReseve">
+		SELECT 
+			<include refid="orderReseveColumns"/>
+		FROM lzr_order_reseve a
+		<include refid="orderReseveJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="OrderReseve">
+		SELECT 
+			<include refid="orderReseveColumns"/>
+		FROM lzr_order_reseve a
+		<include refid="orderReseveJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_order_reseve(
+			contact_phone_no,
+			reseve_time,
+			reseve_memo,
+			contact_sex,
+			member_id,
+			product_id,
+			order_date,
+			contact_name,
+			order_status,
+			create_date,
+			update_date
+		) VALUES (
+			#{contactPhoneNo},
+			#{reseveTime},
+			#{reseveMemo},
+			#{contactSex},
+			#{memberId},
+			#{productId},
+			#{orderDate},
+			#{contactName},
+			#{orderStatus},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_order_reseve SET 	
+			contact_phone_no =#{contactPhoneNo},
+			reseve_time =#{reseveTime},
+			reseve_memo =#{reseveMemo},
+			contact_sex =#{contactSex},
+			member_id =#{memberId},
+			product_id =#{productId},
+			order_date =#{orderDate},
+			contact_name =#{contactName},
+			order_status =#{orderStatus},
+			update_date =#{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_order_reseve SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除批量-->
+	<update id="deleteBatchByLogic">
+		UPDATE lzr_order_reseve SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id in
+		<foreach collection="idList" item="id" open="(" close=")" separator=",">
+				  #{id}
+		</foreach> 
+	</update>
+	
+</mapper>

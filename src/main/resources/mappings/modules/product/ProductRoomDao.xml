@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.product.dao.ProductRoomDao">
+    
+	<sql id="productRoomColumns">
+		a.id AS "id",
+		a.room_type AS "roomType",
+		a.room_name AS "roomName",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="productRoomJoins">
+	</sql>
+    
+	<select id="get" resultType="ProductRoom">
+		SELECT 
+			<include refid="productRoomColumns"/>
+		FROM lzr_product_room a
+		<include refid="productRoomJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ProductRoom">
+		SELECT 
+			<include refid="productRoomColumns"/>
+		FROM lzr_product_room a
+		<include refid="productRoomJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="roomType != null and roomType != ''">
+				AND a.Room_type =#{RoomType}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_product_room(
+		    block_id,
+		    room_type,
+			room_name,
+			create_date,
+			update_date
+		) VALUES (
+			#{blockId},
+			#{roomType},
+			#{roomName},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_product_room SET 	
+			room_type =#{roomType},
+		    room_name =#{roomName},
+			update_date =#{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_product_room SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除批量-->
+	<update id="deleteBatchByLogic">
+		UPDATE lzr_product_room SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id in
+		<foreach collection="idList" item="id" open="(" close=")" separator=",">
+				  #{id}
+		</foreach> 
+	</update>
+</mapper>

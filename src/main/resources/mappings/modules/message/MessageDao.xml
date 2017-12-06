@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.message.dao.MessageDao">
+    
+	<sql id="messageColumns">
+		a.id AS "id",
+		a.msg_demo_id AS "msgDemoId",
+		a.demo_name AS "demoName",
+		a.demo_content AS "demoContent",
+		a.create_date AS "creteDate",
+		a.update_date AS "updateDate"
+
+	</sql>
+	
+	<sql id="messageJoins">
+	</sql>
+    
+	<select id="get" resultType="Message">
+		SELECT 
+			<include refid="messageColumns"/>
+		FROM lzr_message a
+		<include refid="messageJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Message">
+		SELECT 
+			<include refid="messageColumns"/>
+		FROM lzr_message a
+		<include refid="messageJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="demoName != null and demoName != ''">
+				AND a.demo_name LIKE concat('%',#{demoName},'%')
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Message">
+		SELECT 
+			<include refid="messageColumns"/>
+		FROM lzr_message a
+		<include refid="messageJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_message(
+			id,
+			msg_demo_id,
+			demo_name,
+			demo_content,
+			create_date,
+			update_date
+		) VALUES (
+			#{id},
+			#{msgDemoId},
+			#{demoName},
+			#{demoContent},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_message SET 	
+			msg_demo_id  =#{msgDemoId},
+			demo_name  =#{demoName},
+			demo_content  =#{demoContent},
+			update_date  =#{updateDate},
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_message SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

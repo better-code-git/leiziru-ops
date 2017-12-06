@@ -1,0 +1,129 @@
+server:
+  port: 8999
+  jsp-servlet:
+             init-parameters:
+                            development: true 
+logging:
+  config: classpath:logback-spring.xml
+spring:
+#数据库的配置
+  datasource:
+    name: datasource
+    initialize: false
+    url: jdbc:mysql://ilovemldu.mysql.rds.aliyuncs.com:3506/leiziru_dev?zeroDateTimeBehavior=convertToNull&useUnicode=true&characterEncoding=UTF8
+    username: leiziru_dev
+    password: leiziru_dev123
+    type: com.alibaba.druid.pool.DruidDataSource
+    driverClassName: com.mysql.jdbc.Driver
+    max-active: 2
+    max-idle: 2
+    min-idle: 2
+    initial-size: 2
+    validation-query: select 1
+    test-on-borrow: true
+    test-on-return: false
+    test-while-idle: false
+    time-between-eviction-runs-millis: 3000
+    min-evictable-idle-time-millis: 3000
+    max-wait: 3000
+    jmx-enabled: true
+    
+########################################################
+###FREEMARKER (FreeMarkerAutoConfiguration)
+########################################################
+#  freemarker:
+#            allow-request-override: false
+#            cache: false
+#            check-template-location: true
+#            charset: UTF-8
+#            content-type: text/html
+#            expose-request-attributes: false
+#            expose-session-attributes: false
+#            expose-spring-macro-helpers: false
+#            suffix: .html
+#            template-loader-path: classpath:/templates/
+#springMvc的配置
+  mvc:
+     view:
+       prefix: /WEB-INF/views/
+       suffix: .jsp
+     servlet:
+       load-on-startup: 1
+
+#thymeleaf start
+#  thymeleaf:
+#   cache: false
+#   prefix: classpath:/templates/
+#   suffix: .html
+#   encoding: UTF-8
+#   content-type: text/html
+#   mode: HTML5
+            
+ 
+#redis相关配置
+redis:
+  keyPrefix: ureactor
+  password: uworks321%
+  host: 139.129.116.62
+  port: 6380
+
+#spring-ehcache的配置
+  cache:
+    type: ehcache
+    ehcache:
+      config: classpath:ehcache.xml
+#mybatis的配置
+mybatis:
+  config-location: classpath:/mybatis-config.xml
+  mapper-locations: classpath:/mappings/**/*.xml
+  type-aliases-package: com.ureactor.jeesite
+#admin页面管理Path
+adminPath: /leiziru-ops
+#分页配置
+page:
+  pageSize: 10
+  
+# 对象存储配置
+oss:
+  accessKeyId: xoERGPROHHq82JpW
+  accessKeySecret: cqbK8uWxk9lK4C4zI8MDWQrPGb691Y
+  upload-endpoint: http://oss-cn-qingdao.aliyuncs.com
+  download-endpoint: http://dev-proj.oss-cn-qingdao.aliyuncs.com
+  bucketName: dev-proj
+  download-url-expiration: 1800000              # 下载地址的有效时长，单位为ms，默认为半小时
+  
+  
+  # 华为云存储配置
+obs:
+  accessKeyId: WBOT7DDDQOIRYKYAGYU7
+  accessKeySecret: DbwpMrHoNqPViLDFxJfCTwLcKstWnSMCzr7ZLHkk
+  endpoint: obs.cn-north-1.myhwclouds.com
+  accessUrl: http://dev-proj.obs.cn-north-1.myhwclouds.com
+  bucketName: dev-proj
+  
+  
+  
+
+# 系统配置（包含：短信等）
+sms:
+  uid: 1629
+  sign: 啪呗智能停车
+  token: 9c96a5229da65f05237941b52980faed5d5d758a1cce401b9f81b95d8186361b
+  url: http://sms.reactor.uworks.cc/sms/msg/send
+
+alidayu:
+  product: 亲亲跟P虫
+  appKey: 23739329
+  appSecret: bd695801d4108cb8757e4daf0a721d90
+  signName: 虫趣亲子
+  sendMsgUrl: http://gw.api.taobao.com/router/rest
+  registerTmplId: SMS_68035089
+  resetPasswordTmplId: SMS_68180065
+
+email:
+  # mandrillappKey: a4mbtCeMRHAKEpbxjqmY5Q  # mandrillapp 的key
+  fromName: password@qinqinfamily.com  # 发件人的名字
+  fromEmail: password@qinqinfamily.com   # 发件人的邮箱 不同环境不一样！
+  password: Ab1234
+  smtpHost: smtp.exmail.qq.com
+  smtpPort: 465

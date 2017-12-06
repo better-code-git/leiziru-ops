@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.product.dao.ProductBlockDao">
+    
+	<sql id="productBlockColumns">
+		a.id AS "id",
+		a.address_detail AS "addressDetail",
+		a.block_name AS "blockName",
+		a.block_pic_url AS "blockPicUrl",
+		a.block_introduce AS "blockIntroduce",
+		a.traffic_introduce AS "trafficIntroduce",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="productBlockJoins">
+	</sql>
+    
+	<select id="get" resultType="ProductBlock">
+		SELECT 
+			<include refid="productBlockColumns"/>
+		FROM lzr_product_block a
+		<include refid="productBlockJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ProductBlock">
+		SELECT 
+			<include refid="productBlockColumns"/>
+		FROM lzr_product_block a
+		<include refid="productBlockJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="id != null and id != ''">
+				AND a.id =#{id}
+			</if>
+			 <if test="blockName != null and blockName != ''">
+				AND a.block_name LIKE concat('%',#{blockName},'%')
+		    </if>
+			 <if test="updateStartDate != null and updateStartDate != ''">
+				AND a.update_date <![CDATA[ >=]]> #{updateStartDate}
+		    </if>
+		     <if test="updateEndDate != null and updateEndDate != ''">
+				AND a.update_date <![CDATA[ <=]]> #{updateEndDate}
+		    </if>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<insert id="insert">
+		INSERT INTO lzr_product_block(
+			block_name,
+			block_pic_url,
+			address_detail,
+			traffic_introduce,
+			block_introduce,
+			create_date,
+			update_date
+		) VALUES (
+			#{blockName},
+			#{blockPicUrl},
+			#{addressDetail},
+			#{blockIntroduce},
+			#{trafficIntroduce},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_product_block SET 
+			block_name=#{blockName},
+			block_pic_url=#{blockPicUrl},
+			address_detail= #{addressDetail},
+			block_introduce =#{blockIntroduce},
+			traffic_introduce =#{trafficIntroduce},
+			update_date =#{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_product_block SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

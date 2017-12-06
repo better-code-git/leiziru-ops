@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.product.dao.ProductDao">
+    
+	<sql id="productColumns">
+		a.id AS "id",
+		a.product_name AS "productName",
+		a.product_type AS "productType",
+		a.product_type_note AS "productTypeNote",
+		a.product_status AS "productStatus",
+		a.product_price AS "productPrice",
+		a.product_lable AS "productLable",
+		a.product_introduce AS "productIntroduce",
+		a.product_province_id AS "productProvinceId",
+		a.product_city_id AS "productCityId",
+		a.product_zone_id AS "productZoneId",
+		a.product_district_id AS "productDistrictId",
+		a.product_metro_id AS "productMetroId",
+		a.product_profile_url AS "productProfileUrl",
+		a.product_block_pic_url AS "productBlockPicUrl",
+		a.product_address_detail AS "productAddressDetail",
+		a.product_orientation AS "productOrientation",
+		a.product_area AS "productArea",
+		a.product_floor AS "productFloor",
+		a.product_source AS "productSource",
+		a.product_rent_type AS "productRentType",
+		a.recommend_type AS "recommendType",
+		a.decorate_type AS "decorateType",
+		a.block_id AS "blockId",
+		a.block_introduce AS "blockIntroduce",
+		a.product_local_lng AS "productLocalLng",
+		a.product_local_lat AS "productLocalLat",
+		a.traffic_introduce AS "trafficIntroduce",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="productJoins">
+	</sql>
+    
+	<select id="get" resultType="Product">
+		SELECT 
+			<include refid="productColumns"/>
+		FROM lzr_product a
+		<include refid="productJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Product">
+		SELECT 
+			<include refid="productColumns"/>
+		FROM lzr_product a
+		<include refid="productJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="productName != null and productName != ''">
+				AND a.product_name LIKE concat('%',#{productName},'%')
+			</if>
+			<if test="id != null and id != ''">
+				AND a.id =#{id}
+			</if>
+			<if test="productProvinceId != null and productProvinceId != ''">
+				AND a.product_province_id =#{productProvinceId}
+			</if>
+			<if test="productCityId != null and productCityId != ''">
+				AND a.product_city_id =#{productCityId}
+			</if>
+			<if test="productZoneId != null and productZoneId != ''">
+				AND a.product_zone_id =#{productZoneId}
+			</if>
+			<if test="productDistrictId != null and productDistrictId != ''">
+				AND a.product_district_id =#{productDistrictId}
+			</if>
+			<if test="productStatus != null">
+				AND a.product_status =#{productStatus}
+			</if>
+			<if test="productSource != null ">
+				AND a.product_source =#{productSource}
+			</if>
+			 <if test="updateStartDate != null and updateStartDate != ''">
+				AND a.update_date <![CDATA[ >=]]> #{updateStartDate}
+		    </if>
+		     <if test="updateEndDate != null and updateEndDate != ''">
+				AND a.update_date <![CDATA[ <=]]> #{updateEndDate}
+		    </if>
+			
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<!-- 获取新增房源 -->
+	<select id="getNewCount" resultType="Product">
+		SELECT 
+			<include refid="productColumns"/>
+		FROM lzr_product a
+		<include refid="productJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="createDate != null">
+				AND a.create_date  <![CDATA[ >=]]> #{createDate}
+			</if>
+		</where>
+	</select>
+	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO lzr_product(
+			product_name,
+			product_type,
+			product_type_note,
+			product_status,
+			product_price,
+			product_lable,
+			product_introduce,
+			product_province_id,
+			product_profile_url,
+			product_block_pic_url,
+			product_city_id,
+			product_zone_id,
+			product_district_id,
+			product_metro_id,
+			product_address_detail,
+			product_local_lng,
+			product_local_lat,
+			product_orientation,
+			product_rent_type,
+			product_area,
+			block_id,	
+			product_floor,
+			product_source,
+			recommend_type,
+			decorate_type,
+			traffic_introduce,
+			block_introduce,
+			create_date,
+			update_date
+		) VALUES (
+			#{productName},
+			#{productType},
+			#{productTypeNote},
+			#{productStatus},
+			#{productPrice},
+			#{productLable},
+			#{productIntroduce},
+			#{productProvinceId},
+			#{productProfileUrl},
+			#{productBlockPicUrl},
+			#{productCityId},
+			#{productZoneId},
+			#{productDistrictId},
+			#{productMetroId},
+			#{productAddressDetail},
+			#{productLocalLng},
+			#{productLocalLat},
+			#{productOrientation},
+			#{productRentType},
+			#{productArea},
+			#{blockId},
+			#{productFloor},
+			#{productSource},
+			#{recommendType},
+			#{decorateType},
+			#{blockIntroduce},
+			#{trafficIntroduce},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_product SET 	
+			product_name = #{productName},
+			product_type =#{productType},
+			product_type_note =#{productTypeNote},
+			product_status =#{productStatus},
+			product_price	=#{productPrice},
+			product_lable =#{productLable},
+			product_introduce =#{productIntroduce},
+			product_province_id =#{productProvinceId},
+			product_profile_url =#{productProfileUrl},
+			product_block_pic_url =#{productBlockPicUrl},
+			product_city_id =#{productCityId},
+			product_zone_id =#{productZoneId},
+			product_district_id =#{productDistrictId},
+			product_metro_id =#{productMetroId},
+			product_address_detail =#{productAddressDetail},
+			product_local_lng =#{productLocalLng},
+			product_local_lat =#{productLocalLat},
+			product_orientation =#{productOrientation},
+			product_area =#{productArea},
+			block_id=#{blockId},
+			product_floor =#{productFloor},
+			product_rent_type =#{productRentType},
+			product_source =#{productSource},
+			recommend_type =#{recommendType},
+			decorate_type =#{decorateType},
+			block_introduce =#{blockIntroduce},
+			traffic_introduce =#{trafficIntroduce},
+			update_date =#{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_product SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+	<!--逻辑删除批量-->
+	<update id="deleteBatchByLogic">
+		UPDATE lzr_product SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id in
+		<foreach collection="idList" item="id" open="(" close=")" separator=",">
+				  #{id}
+		</foreach> 
+	</update>
+</mapper>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.member.dao.MemberDao">
+    
+	<sql id="memberColumns">
+		a.id AS "id",
+		a.profile_photo_url AS "profilePhotoUrl", 
+		a.nick_name AS "nickName", 
+		a.real_name AS "realName", 
+		a.sex AS "sex", 
+		a.birthday AS "birthday", 
+		a.id_card_no AS "idCardNo", 
+		a.id_card_no_down_pic_url AS "idCardNoDownPicUrl", 
+		a.id_card_no_up_pic_url AS "idCardNoUpPicUrl", 
+		a.phone_no AS "phoneNo", 
+		a.available_amount AS "availableAmount", 
+		a.deposit AS "deposit", 
+		a.consume_amount AS "consumeAmount", 
+		a.authenticated AS "authenticated", 
+		a.member_status AS "memberStatus", 
+		a.create_date AS "createDate", 
+		a.update_date AS "updateDate", 
+		a.registered_date AS "registeredDate", 
+		a.auth_date AS "authDate"
+	</sql>
+	
+	<sql id="memberJoins">
+	</sql>
+    
+	<select id="get" resultType="Member">
+		SELECT 
+			<include refid="memberColumns"/>
+		FROM lzr_member a
+		<include refid="memberJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Member">
+		SELECT 
+			<include refid="memberColumns"/>
+		FROM lzr_member a
+		<include refid="memberJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="nickName != null and nickName != ''">
+				AND a.nick_name LIKE concat('%',#{nickName},'%')
+			</if>
+			<if test="realName != null and realName != ''">
+				AND a.real_name LIKE concat('%',#{realName},'%')
+			</if>
+			<if test="phoneNo != null and phoneNo != ''">
+				AND a.phone_no =#{phoneNo}
+			</if>
+			<if test="idCardNo != null and idCardNo != ''">
+				AND a.id_card_no =#{idCardNo}
+			</if>
+			<if test="id != null and id != ''">
+				AND a.id =#{id}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<!-- 获取新增会员 -->
+	<select id="getNewCount" resultType="Member">
+		SELECT 
+			<include refid="memberColumns"/>
+		FROM lzr_member a
+		<include refid="memberJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="createDate != null">
+				AND a.create_date  <![CDATA[ >=]]> #{createDate}
+			</if>
+		</where>
+	</select>
+	
+	
+	
+	<select id="findAllList" resultType="Member">
+		SELECT 
+			<include refid="memberColumns"/>
+		FROM lzr_member a
+		<include refid="memberJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_member(
+			profile_photo_url, 
+			nick_name, 
+			real_name, 
+			sex, 
+			birthday, 
+			id_card_no, 
+			id_card_no_down_pic_url, 
+			id_card_no_up_pic_url, 
+			phone_no, 
+			available_amount, 
+			deposit, 
+			consume_amount, 
+			authenticated, 
+			member_status, 
+			create_date, 
+			update_date, 
+			registered_date, 
+			auth_date
+		) VALUES (
+			#{profilePhotoUrl}, 
+			#{nickName},  
+			#{realName}, 
+			#{sex}, 
+			#{birthday}, 
+			#{idCardNo}, 
+			#{idCardNoDownPicUrl}, 
+			#{idCardNoUpPicUrl}, 
+			#{phoneNo}, 
+			#{availableAmount}, 
+			#{deposit},  
+			#{consumeAmount}, 
+			#{authenticated},  
+			#{memberStatus}, 
+			#{createDate}, 
+			#{updateDate}, 
+			#{registeredDate}, 
+			#{authDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_member SET 	
+			profile_photo_url=#{profilePhotoUrl},
+			nick_name =#{nickName},   
+			real_name = #{realName},
+			sex = #{sex},
+			birthday = #{birthday},
+			id_card_no = #{idCardNo},
+			id_card_no_down_pic_url = #{idCardNoDownPicUrl},
+			id_card_no_up_pic_url = #{idCardNoUpPicUrl},
+			phone_no = #{phoneNo},
+			available_amount = #{availableAmount},
+			deposit = #{deposit},
+			consume_amount = #{consumeAmount},
+			authenticated = #{authenticated},
+			member_status = #{memberStatus},
+			update_date = #{updateDate},
+			registered_date = #{registeredDate},
+			auth_date= #{authDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateStatus">
+		UPDATE lzr_member SET 	
+			member_status = #{memberStatus},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_member SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+		<!--逻辑删除批量-->
+	<update id="deleteBatchByLogic">
+		UPDATE lzr_member SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id in
+		<foreach collection="idList" item="id" open="(" close=")" separator=",">
+				  #{id}
+		</foreach> 
+	</update>
+	
+</mapper>

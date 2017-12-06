@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.product.dao.ProductCommentDao">
+    
+	<sql id="productCommentColumns">
+		a.id AS "id",
+		a.member_id AS "memberId",
+		a.member_name AS "memberName",
+		a.comment_content AS "commentContent",
+		a.comment_pic_url AS "commentPicUrl",
+		a.comment_date AS "commentDate",
+		a.comment_status AS "commentStatus",
+		a.product_id AS "productId",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="productCommentJoins">
+	</sql>
+    
+	<select id="get" resultType="ProductComment">
+		SELECT 
+			<include refid="productCommentColumns"/>
+		FROM lzr_product_comment a
+		<include refid="productCommentJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ProductComment">
+		SELECT 
+			<include refid="productCommentColumns"/>
+		FROM lzr_product_comment a
+		<include refid="productCommentJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="memberName != null and memberName != ''">
+				AND a.member_name LIKE concat('%',#{memberName},'%')
+			</if>
+			<if test="id != null and id != ''">
+				AND a.id =#{id}
+			</if>
+			<if test="commentDateStart != null and commentDateStart != ''">
+				AND a.comment_date <![CDATA[ >=]]> #{commentDateStart}
+		    </if>
+		     <if test="commentDateEnd != null and commentDateEnd != ''">
+				AND a.comment_date <![CDATA[ <=]]> #{commentDateEnd}
+		    </if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ProductComment">
+		SELECT 
+			<include refid="productCommentColumns"/>
+		FROM lzr_product_comment a
+		<include refid="productCommentJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_product_comment(
+			member_id,
+			member_name ,
+			comment_content ,
+			comment_date ,
+			comment_pic_url,
+			comment_status ,
+			product_id ,
+			create_date ,
+			update_date 
+		) VALUES (
+			#{memberId},
+			#{memberName},
+			#{commentContent},
+			#{commentDate},
+			#{commentPicUrl},
+			#{commentStatus},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_product_comment SET 	
+			member_id =#{memberId},
+			member_name =#{memberName},
+			comment_content =#{commentContent},
+			comment_date =#{commentDate},
+			comment_status =#{commentStatus},
+			comment_pic_url=#{commentPicUrl},
+			product_id =#{productId},
+			update_date =#{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateStatus">
+		UPDATE lzr_product_comment SET 	
+			comment_status =#{commentStatus},
+			update_date =#{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	
+	<update id="delete">
+		UPDATE lzr_product_comment SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

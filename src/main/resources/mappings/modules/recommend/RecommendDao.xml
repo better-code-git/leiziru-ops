@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.recommend.dao.RecommendDao">
+    
+	<sql id="recommendColumns">
+		a.id AS "id",
+		a.rec_pic_url AS "recPicUrl",
+		a.product_id  AS "productId",
+		a.product_province_id AS "productProvinceId" ,
+	    a.product_city_id AS "productCityId",
+		a.product_metro_id AS "productMetroId",
+		a.product_zone_id AS "productZoneId",
+		a.product_district_id AS "productDistrictId",
+		a.product_province_name AS "productProvinceName",
+		a.product_city_name AS "productCityName",
+		a.product_metro_name AS "productMetroName",
+		a.product_zone_name AS "productZoneName",
+		a.product_district_name AS "productDistrictName",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="recommendJoins">
+	</sql>
+    
+	<select id="get" resultType="Recommend">
+		SELECT 
+			<include refid="recommendColumns"/>
+		FROM lzr_recommend a
+		<include refid="recommendJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Recommend">
+		SELECT 
+			<include refid="recommendColumns"/>
+		FROM lzr_recommend a
+		<include refid="recommendJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="id != null and name != ''">
+				AND a.id = #{name}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Recommend">
+		SELECT 
+			<include refid="recommendColumns"/>
+		FROM lzr_recommend a
+		<include refid="recommendJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_recommend(
+			product_id,
+			rec_pic_url,
+			product_province_id,
+	    	product_city_id,
+			product_metro_id,
+			product_zone_id,
+			product_district_id,
+			product_province_name,
+			product_city_name,
+			product_metro_name,
+			product_zone_name,
+			product_district_name,
+			create_date,
+			update_date
+		) VALUES (
+			#{productId},
+			#{recPicUrl},
+			#{productProvinceId},
+			#{productCityId},
+			#{productMetroId},
+			#{productZoneId},
+			#{productDistrictId},
+			#{productProvinceName},
+			#{productCityName},
+			#{productMetroName},
+			#{productZoneName},
+			#{productDistrictName},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_recommend SET 	
+			product_id = #{productId},
+			rec_pic_url= #{recPicUrl}, 
+			product_province_id= #{productProvinceId}, 
+	    	product_city_id = #{productCityId}, 
+			product_metro_id = #{productMetroId}, 
+			product_zone_id = #{productZoneId}, 
+			product_district_id= #{productDistrictId}, 
+			product_province_name= #{productProvinceName}, 
+			product_city_name= #{productCityName}, 
+			product_metro_name= #{productMetroName}, 
+			product_zone_name= #{productZoneName}, 
+			product_district_name= #{productDistrictName}, 
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_recommend SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

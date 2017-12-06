@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.product.dao.ProductAssortDao">
+    
+	<sql id="productAssortColumns">
+		a.id AS "id",
+	    a.product_id AS "productId",
+	    a.assort AS "assort",
+		a.room_name AS "roomName",
+		a.room_area AS "roomArea",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="productAssortJoins">
+	</sql>
+    
+	<select id="get" resultType="ProductAssort">
+		SELECT 
+			<include refid="productAssortColumns"/>
+		FROM lzr_product_assort a
+		<include refid="productAssortJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="ProductAssort">
+		SELECT 
+			<include refid="productAssortColumns"/>
+		FROM lzr_product_assort a
+		<include refid="productAssortJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="productId != null and productId != ''">
+				AND a.product_id =#{productId}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="ProductAssort">
+		SELECT 
+			<include refid="productAssortColumns"/>
+		FROM lzr_product_assort a
+		<include refid="productAssortJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_product_assort(
+		    product_id,
+	        assort,
+		    room_name,
+		    room_area,
+			create_date,
+			update_date
+		) VALUES (
+			#{productId},
+			#{assort},
+			#{roomName},
+			#{roomArea},
+			#{createDate},
+			#{updateDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_product_assort SET
+		    product_id = #{productId}, 	
+			assort = #{assort},
+		    room_name =#{roomName},
+		    room_area =#{roomArea},
+			update_date =#{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_product_assort SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

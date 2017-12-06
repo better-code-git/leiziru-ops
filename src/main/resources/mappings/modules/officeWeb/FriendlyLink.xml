@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.officeWeb.dao.FriendlyLinkDao">
+    
+	<sql id="friendlyLinkColumns">
+		a.id AS "id",
+		a.friendly_link_url  AS "friendlyLinkUrl",
+		a.friendly_desc AS "friendlyDesc",
+		a.create_date AS "createDate",
+		a.update_date AS "updateDate"
+	</sql>
+	
+	<sql id="friendlyLinkJoins">
+	</sql>
+    
+	<select id="get" resultType="FriendlyLink">
+		SELECT 
+			<include refid="friendlyLinkColumns"/>
+		FROM lzr_friendly_link a
+		<include refid="friendlyLinkJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="FriendlyLink">
+		SELECT 
+			<include refid="friendlyLinkColumns"/>
+		FROM lzr_friendly_link a
+		<include refid="friendlyLinkJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<insert id="insert">
+		INSERT INTO lzr_friendly_link(
+			friendly_link_url,
+			friendly_desc,
+			create_date,
+			update_date
+		) VALUES (
+			#{friendlyLinkUrl},
+			#{friendlyDesc},
+			#{createDate},
+			#{updateDate}		
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_friendly_link SET 	
+			friendly_link_url=#{friendlyLinkUrl},
+			friendly_desc =##{friendlyDesc},
+			update_date = #{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_web_banner SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

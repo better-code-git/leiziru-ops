@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: leiziru-ops
+  http:
+    encoding: { charset: UTF-8, enable: true, force: true }
+#产品信息设置
+productName: leiziru-ops-平台
+#产品版本
+version: leiziru-opss-1.0
+#静态文件后缀
+web:
+  staticFile: .css,.js,.png,.jpg,.gif,.jpeg,.bmp,.ico,.swf,.psd,.htc,.htm,.html,.crx,.xpi,.exe,.ipa,.apk
+#演示模式: 不能操作和保存的模块： sys: area/office/user/role/menu/dict
+demoMode: false
+#配置不需要记录日志的URI结尾（以英文逗号隔开）
+logPath: /,/list,/index,/form,/find,/query,/get,/search
+#代码生成项目地址
+projectPath: D:/workspace/ureactor-ops-springboot

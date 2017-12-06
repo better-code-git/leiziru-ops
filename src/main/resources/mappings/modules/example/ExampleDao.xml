@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.example.dao.ExampleDao">
+    
+	<sql id="exampleColumns">
+		a.id AS "id",
+		a.name AS "name",
+		a.logo AS "logo",
+		a.tel_number AS "telNumber",
+		a.province AS "province",
+		a.city AS "city",
+		a.district AS "district",
+		a.address AS "address",
+		a.latitude AS "latitude",
+		a.longitude AS "longitude",
+		a.introduce AS "introduce",
+		a.create_by AS "createBy.id",
+		a.create_date AS "createDate",
+		a.update_by AS "updateBy.id",
+		a.update_date AS "updateDate",
+		a.del_flag AS "delFlag",
+		a.begin_date AS "beginDate",
+		a.end_date AS "endDate"
+	</sql>
+	
+	<sql id="exampleJoins">
+	</sql>
+    
+	<select id="get" resultType="Example">
+		SELECT 
+			<include refid="exampleColumns"/>
+		FROM example a
+		<include refid="exampleJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Example">
+		SELECT 
+			<include refid="exampleColumns"/>
+		FROM example a
+		<include refid="exampleJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="name != null and name != ''">
+				AND a.name LIKE 
+					<if test="dbName == 'oracle'">'%'||#{name}||'%'</if>
+					<if test="dbName == 'mssql'">'%'+#{name}+'%'</if>
+					<if test="dbName == 'mysql'">concat('%',#{name},'%')</if>
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Example">
+		SELECT 
+			<include refid="exampleColumns"/>
+		FROM example a
+		<include refid="exampleJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO example(
+			id,
+			name,
+			logo,
+			tel_number,
+			province,
+			city,
+			district,
+			address,
+			latitude,
+			longitude,
+			introduce,
+			create_by,
+			create_date,
+			update_by,
+			update_date,
+			del_flag,
+			begin_date,
+			end_date
+		) VALUES (
+			#{id},
+			#{name},
+			#{logo},
+			#{telNumber},
+			#{province},
+			#{city},
+			#{district},
+			#{address},
+			#{latitude},
+			#{longitude},
+			#{introduce},
+			#{createBy.id},
+			#{createDate},
+			#{updateBy.id},
+			#{updateDate},
+			#{delFlag},
+			#{beginDate},
+			#{endDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE example SET 	
+			name = #{name},
+			logo = #{logo},
+			tel_number = #{telNumber},
+			province = #{province},
+			city = #{city},
+			district = #{district},
+			address = #{address},
+			latitude = #{latitude},
+			longitude = #{longitude},
+			introduce = #{introduce},
+			update_by = #{updateBy.id},
+			update_date = #{updateDate},
+			begin_date = #{beginDate},
+			end_date = #{endDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE example SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>

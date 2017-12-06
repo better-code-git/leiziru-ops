@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ureactor.jeesite.modules.trade.dao.TradeDao">
+    
+	<sql id="tradeColumns">
+		a.id AS "id",
+		a.trade_code AS "tradeCode",
+		a.trade_time AS "tradeTime",
+		a.trade_amount AS "tradeAmount",
+		a.trade_channel AS "tradeChannel",
+	    a.trade_type AS "tradeType",
+		a.member_id AS "memberId",
+		a.nick_name AS "nickName",
+		a.order_id AS "orderId",
+		a.update_date AS "updateDate",
+		a.create_date AS "createDate"
+	</sql>
+	
+	<sql id="tradeJoins">
+	</sql>
+    
+	<select id="get" resultType="Trade">
+		SELECT 
+			<include refid="tradeColumns"/>
+		FROM lzr_trade a
+		<include refid="tradeJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+	<select id="findList" resultType="Trade">
+		SELECT 
+			<include refid="tradeColumns"/>
+		FROM lzr_trade a
+		<include refid="tradeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+			<if test="tradeCode != null and tradeCode != ''">
+				AND a.trade_code =#{tradeCode}
+			</if>
+		</where>
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findAllList" resultType="Trade">
+		SELECT 
+			<include refid="tradeColumns"/>
+		FROM lzr_trade a
+		<include refid="tradeJoins"/>
+		<where>
+			a.del_flag = #{DEL_FLAG_NORMAL}
+		</where>		
+		<choose>
+			<when test="page !=null and page.orderBy != null and page.orderBy != ''">
+				ORDER BY ${page.orderBy}
+			</when>
+			<otherwise>
+				ORDER BY a.update_date DESC
+			</otherwise>
+		</choose>
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO lzr_trade(
+			trade_code,
+			trade_time,
+			trade_amount,
+			trade_channel,
+			trade_type,
+			member_id,
+			nick_name,
+			order_id,
+			update_date,
+			create_date
+		) VALUES (
+			#{tradeCode},
+			#{tradeTime},
+			#{tradeAmount},
+			#{tradeChannel},
+			#{tradeType},
+			#{memberId},
+			#{nickName},
+			#{orderId},
+			#{updateDate},
+			#{createDate}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE lzr_trade SET 	
+			trade_code =#{tradeCode},
+			trade_time =#{tradeTime},
+			trade_amount =#{tradeAmount},
+			trade_channel =#{tradeChannel},
+			member_id =#{memberId},
+			order_id =#{orderId},
+			update_date =#{updateDate}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE lzr_trade SET 
+			del_flag = #{DEL_FLAG_DELETE}
+		WHERE id = #{id}
+	</update>
+	
+</mapper>
