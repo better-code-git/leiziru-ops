@@ -5,7 +5,7 @@
 <%@ attribute name="imageUrl" type="java.lang.String" required="true"%>
 <%@ attribute name="showUrl" type="java.lang.String" required="true"%>
 <%@ attribute name="fileDir" type="java.lang.String" required="true"%>
-	<input type='button' onclick="javascript:document.getElementById('${imgFileData}').click();" value='添加图片'/>
+	<input type='button' id="submitButton" onclick="javascript:document.getElementById('${imgFileData}').click();" value='添加图片'/>
 	<div style="display:none;">
 	<input type="file" accept="image/*" name="${imgFileData}"  id="${imgFileData}"
 	onchange="previewFileTag('${imagePreview}','${imgFileData}','${imageUrl}','${fileDir}','${showUrl}')"/>
