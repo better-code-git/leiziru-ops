@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="leiziru-ops:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="leiziru-ops-1.0.0.war">
+      <element id="artifact" artifact-name="leiziru-ops:war exploded" />
+    </root>
+  </artifact>
+</component>
